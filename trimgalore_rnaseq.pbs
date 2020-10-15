@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Request a run time of 5 hours and 30 mins
+#PBS -l walltime=68:30:00
+
+# Request 1 processor in 1 node
+#PBS -l nodes=1:ppn=12
+
+#Request 7600 megabytes memory per processor (48 usable CPUs)
+#PBS -l mem=88gb
+#PBS -l mem=88gb
+#PBS -j oe
+#PBS -N trimgalore_rnaseq_d1oils
+#PBS -q copperhead
+#PBS -t 1-30
+umask 007
+set -eu
+
+file=$(sed -n -e "${PBS_ARRAYID}p" /nobackup/banana_genome/aneeta/RNAseqdata2_D1/pairs.txt)
+
+echo "Launching fastx"
+
+#cd $home
+module load cutadapt/1.13
+module load fastqc/0.11.5
+module load trim_galore/0.4.4
+
+cd /nobackup/banana_genome/aneeta/RNAseqdata2_D1/trimmed
+
+#~/sw/ExpressionAnalysis-ea-utils-bd148d4/clipper/
+
+echo "Working on ${file}"
+trim_galore --paired --quality 20 --fastqc \
+/nobackup/banana_genome/aneeta/RNAseqdata2_D1/${file}_R1.fastq \
+/nobackup/banana_genome/aneeta/RNAseqdata2_D1/${file}_R2.fastq
