@@ -1,0 +1,25 @@
+#!/bin/bash                                                                                                                                    
+
+# Request a run time of 5 hours and 30 minutes                                                                                                 
+#PBS -l walltime=68:30:00                                                                                                                      
+
+# Request 1 processor in 1 node                                                                                                                
+#PBS -l nodes=1:ppn=12                                                                                                                         
+
+# Request 7600 megabytes memory per processor.  ( 48 usable CPUs)                                                                              
+#PBS -l mem=88gb                                                                                                                               
+#PBS -j oe                                                                                                                                     
+#PBS -N rnaseqd1_sortedbam                                                                                                                     
+#PBS -q copperhead                                                                                                                             
+#PBS -t 1-30                                                                                                                                   
+umask 007
+set -eu
+
+file=$(sed -n -e "${PBS_ARRAYID}p" /nobackup/banana_genome/aneeta/RNAseqdata2_D1/pairs.txt)
+
+echo "Launching samtools"                                                                                                                    
+module load samtools
+
+cd /nobackup/banana_genome/aneeta/RNAseqdata2_D1/sortedbam
+
+samtools view -Su /nobackup/banana_genome/aneeta/RNAseqdata2_D1/aligned/${file}_rnaseqD1hisat.sam | samtools sort -o /nobackup/banana_genome/aneeta/RNAseqdata2_D1/sortedbam/${file}_sortedbamrnaseqD1hisat.bam

@@ -1,0 +1,26 @@
+#!/usr/bin/bash                                                                                                                                                                                                                                                                                
+# Request a run time of 5 hours and 30 minutes                                                                                                                                                                                                                                                
+#PBS -l walltime=68:30:00                                                                                                                                                                                                                                                                      
+# Request 1 processor in 1 node                                                                                                                                                                                                                                                               
+#PBS -l nodes=1:ppn=12                                                                                                                                                                                                                                                                         
+# Request 7600 megabytes memory per processor.  ( 48 usable CPUs)                                                                                                                                                                                                                             
+#PBS -l mem=88gb                                                                                                                                                                                                                                                                              
+#PBS -j oe                                                                                                                                                                                                                                                                                    
+#PBS -N rnaseq2_d1oilscount                                                                                                                                                                                                                                                                   
+#PBS -q copperhead                                                                                                                                                                                                                                                                            
+#PBS -t 1-30                                                                                                                                                                                                                                                                                   
+umask 007
+set -eu
+
+file=$(sed -n -e "${PBS_ARRAYID}p" /nobackup/banana_genome/aneeta/RNAseqdata2_D1/pairs.txt)
+
+
+export PATH="$HOME/sw/HTSeq-0.11.2/scripts:$PATH"
+                                                                                                                                                                                                                                                                           
+
+cd /nobackup/banana_genome/aneeta/RNAseqdata2_D1/sortedbam
+
+echo "working on ${file}"                                                                                                                                                                             
+
+htseq-count --stranded=no -i Parent --format=bam /nobackup/banana_genome/aneeta/RNAseqdata2_D1/sortedbam/${file}_sortedbamrnaseqD1hisat.bam \
+/users/auppal/sw/hisat2-2.1.0/GRCh38_latest_genomic.gff > /nobackup/banana_genome/aneeta/RNAseqdata2_D1/counted2/${file}_Count2rnaseqD1.txt
